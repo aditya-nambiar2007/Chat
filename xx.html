@@ -56,6 +56,9 @@
             display: block;
             margin-bottom: 5px;
         }
+        a{
+            color: blue; 
+        }
     </style>
 </head>
 
@@ -77,8 +80,13 @@
             let s = str.replace(/</g, "&lt;").replace(/>/g, "&gt;")
             s = s.replace(/^https?:\/\/\S+/ig, check.url("$&"))
             s = s.replace(/\n/gi,"<br>")
-            s = s.replace(/\*.\*/g, "<b>$&</b>")
-            s = s.replace(/_._/g, "<i>$&</i>")
+            if(s.search(/\\\w{1,4}\s.+\//gi) != -1){
+            let searches = s.match(/\\\w{1,4}/gi)
+            searches.forEach(search=>{
+            let string = search.slice(1,search.length)
+            s = s.replace(/\\\w{1,4}/,`<${string}>`).replace(/\//,`</${string}>`) 
+            }
+            )}
             return s
         }
 
@@ -91,7 +99,7 @@
 
         while (ws.CLOSED != 3 || ws.CLOSING != 2) { location.href.replace('http', 'ws') }
 
-        ws.addEventListener("message", async m => { div.innerHTML += await new Response(m.data).text(); console.log(m); })
+        ws.addEventListener("message", async m => { div.innerHTML += await new Response(m.data).text();    div.scrollTop = div.scrollHeight; })
 
         document.querySelector("form").addEventListener('submit', e => {
             e.preventDefault()
